@@ -9,10 +9,10 @@ public class LanguageFactory {
         if(language.equals(Lang.CPP.getValue())){
             IRunner runner = new CPPRunner();
             return runner;
-        } else if(language.equals(Lang.CPP.getValue())){
+        } else if(language.equals(Lang.JAVA.getValue())){
             IRunner runner = new JavaRunner();
             return runner;
-        } else if(language.equals(Lang.CPP.getValue())){
+        } else if(language.equals(Lang.PYTHON.getValue())){
             IRunner runner = new PythonRunner();
             return runner;
         }
