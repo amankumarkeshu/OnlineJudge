@@ -38,7 +38,7 @@ public class CPPRunner implements IRunner{
             String[] pathnames = questionDirectory.list(filter);
             int size = pathnames.length;
             ArrayList<Pair<Integer,String>>  testResults = new ArrayList<>();
-
+            compileCode(name_of_the_problem);;
             for ( int input = 1; input <= size; input++){
                 /*
                     Input File: /Users/amankumarkeshu/Documents/Projects/codefoxes/OnlineJudge/Questions/Addition/tests/input-1.txt
@@ -48,7 +48,7 @@ public class CPPRunner implements IRunner{
                 String inputFile="/Users/amankumarkeshu/Documents/Projects/codefoxes/OnlineJudge/Questions/"+name_of_the_problem+"/tests/input-" + input+".txt";
                 String useroutputFile="/Users/amankumarkeshu/Documents/Projects/codefoxes/OnlineJudge/Questions/"+name_of_the_problem+"/tests/user-output-" + input+".txt";
                 String actualoutputFile="/Users/amankumarkeshu/Documents/Projects/codefoxes/OnlineJudge/Questions/"+name_of_the_problem+"/tests/output-" + input+".txt";
-//                if()
+//
                 run_one_test(name_of_the_problem,inputFile,useroutputFile);
                 String result = compare_one_test(useroutputFile,actualoutputFile);
                 System.out.println("Input: "+input +" => " + result);
@@ -56,7 +56,6 @@ public class CPPRunner implements IRunner{
                 testResults.add(testResult);
                 if(result.equals("Passed")) {
                     passedCount++;
-
                 } else {
                     failedCount++;
                 }
@@ -73,26 +72,35 @@ public class CPPRunner implements IRunner{
         return  null;
     }
 
+
+    public void compileCode(String nameOfProblem) {
+        String filePath = "/Users/amankumarkeshu/Documents/Projects/codefoxes/OnlineJudge/tempFiles/";
+        String compileCode = "cd " + filePath + " && g++ -std=c++11 " + nameOfProblem + ".cpp -o " + nameOfProblem + ".out";
+        try {
+            // Process to compile the code
+            ProcessBuilder builder = new ProcessBuilder();
+            builder.command("bash", "-c", compileCode);
+            builder.redirectErrorStream(true);
+            Process p = builder.start();
+            printResults(p);
+            System.out.println("Code Compiled Successfully");
+
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /* Command to run and test
             cd /Users/amankumarkeshu/Documents/Projects/codefoxes/OnlineJudge/tempFiles/ && g++ -std=c++11 Addition.cpp -o Addition.out
             Projects/codefoxes/OnlineJudge/Questions/Addition/tests/sample-input-1.txt > /Users/amankumarkeshu/Documents/Projects/codefoxes/OnlineJudge/Questions/Addition/tests/sample-output-1.txt
 
      */
-    public String run_one_test(String nameOfProblem, String  input_file_name, String output_file_name){
+    public void run_one_test(String nameOfProblem, String  input_file_name, String output_file_name){
         String filePath = "/Users/amankumarkeshu/Documents/Projects/codefoxes/OnlineJudge/tempFiles/";
 
-        String cmd = "cd "+ filePath+" && ./"+nameOfProblem + " < " + input_file_name + " > " + output_file_name;
-        String ans = "";
-        String compileCode = "cd " +filePath+ " && g++ -std=c++11 " + nameOfProblem + ".cpp -o " + nameOfProblem + ".out";
         String runAndOutput = "cd "+ filePath+" && ./"+nameOfProblem +".out" + " < " + input_file_name + " > " + output_file_name;
         try {
-            // Process to compile the code
-            ProcessBuilder builder = new ProcessBuilder();
-            builder.command("bash","-c", compileCode);
-            builder.redirectErrorStream(true);
-            Process p = builder.start();
-            printResults(p);
-            System.out.println("Code Compiled Successfully");
 
             // Process to run and execute the code
             ProcessBuilder builder2 = new ProcessBuilder();
@@ -105,8 +113,6 @@ public class CPPRunner implements IRunner{
         catch (IOException e) {
             e.printStackTrace();
         }
-
-        return ans;
     }
 
     public String compare_one_test(String userOutput, String actualOutput ) {
@@ -120,7 +126,7 @@ public class CPPRunner implements IRunner{
         else return "Failed";
         // only sample
     }
-    public String removeSpace( String file){
+    public String removeSpace( String file) {
         StringBuilder contentBuilder = new StringBuilder();
         try (Stream<String> stream = Files.lines( Paths.get(file), StandardCharsets.UTF_8))
         {
