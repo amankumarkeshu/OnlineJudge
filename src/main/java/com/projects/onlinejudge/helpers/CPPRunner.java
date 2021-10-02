@@ -3,24 +3,18 @@ package com.projects.onlinejudge.helpers;
 import com.projects.onlinejudge.dto.RunRequest;
 import com.projects.onlinejudge.dto.RunResponse;
 import com.sun.tools.javac.util.Pair;
-import org.springframework.util.StringUtils;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.stream.Stream;
 
-public class CPPRunner implements IRunner{
+
+public class CPPRunner extends IRunner{
     @Override
     public RunResponse runTests(RunRequest attribute)  {
         Integer passedCount =0 , failedCount =0;
         try {
 
             // TODO : service2.call(attribute) For future
-
             String lang= attribute.getLang();
             String userId= attribute.getUserId();
             String submissionId= attribute.getSubmissionId();
@@ -91,17 +85,12 @@ public class CPPRunner implements IRunner{
         }
     }
 
-    /* Command to run and test
-            cd /Users/amankumarkeshu/Documents/Projects/codefoxes/OnlineJudge/tempFiles/ && g++ -std=c++11 Addition.cpp -o Addition.out
-            Projects/codefoxes/OnlineJudge/Questions/Addition/tests/sample-input-1.txt > /Users/amankumarkeshu/Documents/Projects/codefoxes/OnlineJudge/Questions/Addition/tests/sample-output-1.txt
 
-     */
     public void run_one_test(String nameOfProblem, String  input_file_name, String output_file_name){
         String filePath = "/Users/amankumarkeshu/Documents/Projects/codefoxes/OnlineJudge/tempFiles/";
 
         String runAndOutput = "cd "+ filePath+" && ./"+nameOfProblem +".out" + " < " + input_file_name + " > " + output_file_name;
         try {
-
             // Process to run and execute the code
             ProcessBuilder builder2 = new ProcessBuilder();
             builder2.command("bash","-c", runAndOutput);
@@ -113,67 +102,5 @@ public class CPPRunner implements IRunner{
         catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public String compare_one_test(String userOutput, String actualOutput ) {
-//        File userOutputFile = new File(userOutput);
-//        File actualOutputFile = new File(actualOutput);
-        String userText = removeSpace(userOutput);
-        String actualText = removeSpace(actualOutput);
-        if(userText.equals(actualText)){
-            return "Passed";
-        }
-        else return "Failed";
-        // only sample
-    }
-    public String removeSpace( String file) {
-        StringBuilder contentBuilder = new StringBuilder();
-        try (Stream<String> stream = Files.lines( Paths.get(file), StandardCharsets.UTF_8))
-        {
-            stream.forEach(s -> contentBuilder.append(s));
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return contentBuilder.toString();
-    }
-
-    // Printing the terminal output after code execution
-    public static void printResults(Process process) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line = "";
-        while ((line = reader.readLine()) != null) {
-            System.out.println(line);
-        }
-    }
-
-    // This filter will only include files starting  with input
-    FilenameFilter filter = new FilenameFilter() {
-        @Override
-        public boolean accept(File f, String name) {
-            return name.startsWith("input");
-        }
-    };
-
-    public static void copyContent(File a, File b) throws Exception
-    {
-        FileInputStream in = new FileInputStream(a);
-        FileOutputStream out = new FileOutputStream(b);
-        try {
-            int n;
-            while ((n = in.read()) != -1) {
-                out.write(n);
-            }
-        }
-        finally {
-            if (in != null) {
-                in.close();
-            }
-            if (out != null) {
-                out.close();
-            }
-        }
-        System.out.println("File Copied");
     }
 }
